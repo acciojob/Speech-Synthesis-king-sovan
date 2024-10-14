@@ -36,38 +36,44 @@
   const speakButton = document.querySelector('#speak');
   const stopButton = document.querySelector('#stop');
 
-  //Your code goes here
-	speechSynthesis.addEventListener('voiceschanged', populateVoices);
-	voicesDropdown.addEvenetListener('change', setVoices)
-	options.forEach(option => option.addEventListener('change', setOption));
-	speakButton.addEventListener('click', startSpeaking);
-	stopButton.addEventListener('click', stopSpeaking);
+  // Function to populate the voices dropdown
+  function populateVoices() {
+    voices = speechSynthesis.getVoices();
+    voicesDropdown.innerHTML = voices
+      .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
+      .join('');
+  }
 
-	function populateVoices() {
-		voices = speechSynthesis.getVoices();
-		voicesDropdown.innerHTML = voices
-			.map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
-			.join('')
-	}
+  // Set the selected voice
+  function setVoice() {
+    msg.voice = voices.find(voice => voice.name === this.value);
+  }
 
-	function setVoices() {
-		msg.voice = voices.find(voice => voice.name === this.value);
-	}
+  // Set options for rate and pitch
+  function setOption() {
+    msg[this.name] = this.value;
+  }
 
-	function setOption() {
-		msg[this.name] = this.value;
-	}
+  // Start speaking
+  function startSpeaking() {
+    speechSynthesis.cancel(); // Stop any current speaking before starting a new one
+    msg.text = document.querySelector('[name="text"]').value;
+    speechSynthesis.speak(msg);
+  }
 
-	function startSpeaking() {
-		speechSynthesis.cancel();
-		msg.text = document.querySelector('[name="text"').value;
-		speechSynthesis.speak(msg);
-	}
+  // Stop speaking
+  function stopSpeaking() {
+    speechSynthesis.cancel();
+  }
 
-	function stopSpeaking() {
-		speechSynthesis.cancel();
-	}
+  // Event listeners
+  speechSynthesis.addEventListener('voiceschanged', populateVoices);
+  voicesDropdown.addEventListener('change', setVoice);
+  options.forEach(option => option.addEventListener('change', setOption));
+  speakButton.addEventListener('click', startSpeaking);
+  stopButton.addEventListener('click', stopSpeaking);
 </script>
+
 
 </body>
 </html>
